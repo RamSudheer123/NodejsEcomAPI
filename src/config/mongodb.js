@@ -1,6 +1,5 @@
 import { MongoClient } from 'mongodb';
 
-
 const url = process.env.DB_URL;
 
 let client;
