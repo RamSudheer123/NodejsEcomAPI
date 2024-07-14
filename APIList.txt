@@ -1,0 +1,32 @@
+ProductController:
+Get Products
+Add a Product
+Get one Product
+Rate Product
+Filter Product
+add items to cart
+get items of cart
+remove items from cart
+
+
+Notes: 
+Securing APIs:
+    Understanding Security:
+        why do we secure apps?
+        1.For Controlled access
+        2.Data privacy
+        How do we secure apps?
+        1.Verify who user items
+        2.Verify what users can access
+
+User Controller:
+Signup - name, email, password, typeOfUser (customer, seller)
+Signin - email, password
+
+In swagger.json
+/* we don't need to mention http protocol in url in host*/
+
+
+to do's
+1. API documentation notes - done
+2. swagger implementation from products endpoint
