@@ -31,14 +31,16 @@ export default class ProductController {
         
     }
 
-    rateProduct(req, res) {
+    async rateProduct(req, res) {
         try {
             const userID = req.userID;
-            const productID = req.query.productID;
-            const rating = req.query.rating;
+            // const productID = req.query.productID; //If we use query data will come from url. example = http://localhost:3000/api/products/rating?userID=2&productID=10&rating=4.5
+            // const rating = req.query.rating;
+            const productID = req.body.productID;
+            const rating = req.body.rating;
             // const error = ProductModel.rateProduct(userID, productID, rating) 
             // try {
-            this.productRepository.rate(userID, productID, rating)
+            await this.productRepository.rate(userID, productID, rating)
             // }catch(err) {
             //     return res.status(400).send(err.message) //.message is because of error class is returning multiple parameters, check error class for more info
             // }
