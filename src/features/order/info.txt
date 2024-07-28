@@ -1,0 +1,10 @@
+Place order: 
+1. Get cart items of user, calculate the totalAmount
+2. Create the record for order
+3. Reduce the stock (products quantity) - for example we have 10 iphones and customer ordered 2 iphones , after that we need to reduce the iphones quantity to 8
+4. Clear the cart
+
+// these step we will not do now
+5. Deduct the payment
+6. Inform to sellers
+7. Inform to courier

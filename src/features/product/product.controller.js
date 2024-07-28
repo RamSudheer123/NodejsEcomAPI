@@ -82,5 +82,15 @@ export default class ProductController {
             return new applicationError("Something went wrong with database", 500)
         }
     }
-        
+    
+    async averagePrice(req, res) {
+        try{
+            const result = await this.productRepository.averageProductPricePerCategory();
+            res.status(200).send(result)
+        }
+        catch(err) {
+            console.log(err); // Need to log the error here
+            return new applicationError("Something went wrong with database", 500)
+        }
+    }
 }

@@ -13,6 +13,7 @@ import apidocs from './swagger.json' assert{type: "json"}; // This is for Swagge
 import loggerMiddleware from "./src/middlewares/logger.middleware.js";
 import { applicationError } from "./src/error-handler/applicationError.js";
 import { connectToMongoDB } from "./src/config/mongodb.js";
+import orderRouter from "./src/features/order/order.routes.js";
 
 
 const server = express();
@@ -46,6 +47,7 @@ server.use("/api-docs", swagger.serve, swagger.setup(apidocs)) //This is for Swa
 server.use("/api/products", jwtAuth, productRouter) //This is for jwt authentication
 server.use("/api/cartItems", jwtAuth, cartItemRouter)
 server.use("/api/users", userRouter)
+server.use("/api/orders", jwtAuth, orderRouter)
 
 //handle default request
 server.get("/", (req, res) => {
