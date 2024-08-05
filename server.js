@@ -14,6 +14,8 @@ import loggerMiddleware from "./src/middlewares/logger.middleware.js";
 import { applicationError } from "./src/error-handler/applicationError.js";
 import { connectToMongoDB } from "./src/config/mongodb.js";
 import orderRouter from "./src/features/order/order.routes.js";
+import { connectUsingMongoose } from "./src/config/mongooseConfig.js";
+import mongoose from "mongoose";
 
 
 const server = express();
@@ -57,6 +59,9 @@ server.get("/", (req, res) => {
 //Error handler middleware
 server.use((err, req, res, next) => {
     console.log(err)
+    if(err instanceof mongoose.Error.ValidationError) {
+        res.status(400).send(err.message)
+    }
     // Application error
     if(err instanceof applicationError) {
         res.status(err.code).send(err.message)
@@ -73,5 +78,6 @@ server.use((req, res) => {
 
 server.listen('3000', () => {
     console.log("Server is listening at 3000")
-    connectToMongoDB();
+    // connectToMongoDB();
+    connectUsingMongoose(); //This is to connect with mongodb using mongoose
 })

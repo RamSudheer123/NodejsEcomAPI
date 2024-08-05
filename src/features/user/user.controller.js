@@ -9,17 +9,31 @@ export default class UserController {
         this.userRepository = new UserRepository()
     }
 
-    async signUp(req, res) {
-        try{
-            const { name, email, password, type } = req.body
-            //To hash the password
-            const hashedpassword = await bcrypt.hash(password, 10); //Here second parameter is salt which is used to generate the randon string and add that to hashedpassword to avoid generation of same hashed password in case of same passwords given by user, ideal number of digits in salt is 10 to 12
-            const user = new UserModel(name, email, hashedpassword, type)
-            await this.userRepository.signUpUser(user)
-            res.status(200).send(user)
+    async resetPassword(req, res) {
+        const {newPassword} = req.body
+        const hashedPassword = await bcrypt.hash(newPassword, 12)
+        const userID = req.userID;
+        try {
+            await this.userRepository.resetPassword(userID, hashedPassword)
+            res.status(200).send("Password is updated")
         }
         catch(err) {
             return new applicationError("Something went wrong with database", 500)
+        }
+    }
+
+    async signUp(req, res, next) {
+        const { name, email, password, type } = req.body
+        try{
+            //To hash the password
+            // const hashedpassword = await bcrypt.hash(password, 10); //Here second parameter is salt which is used to generate the randon string and add that to hashedpassword to avoid generation of same hashed password in case of same passwords given by user, ideal number of digits in salt is 10 to 12
+            const user = new UserModel(name, email, password, type)
+            await this.userRepository.signUpUser(user);
+            res.status(201).send(user);
+        }
+        catch(err) {
+                next(err);
+                // return new applicationError("Something went wrong with database", 500)
         }
     }
     async signIn(req, res) {

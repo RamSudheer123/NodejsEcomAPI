@@ -12,7 +12,7 @@ const jwtAuth = (req, res, next) => {
 
     //3.check if token valid
     try{
-        const payload = jwt.verify(token, 'ry]CuLW_QN=Q|8w242X[HJZfV=vJ~8')
+        const payload = jwt.verify(token, process.env.JWT_SECRET) // 'ry]CuLW_QN=Q|8w242X[HJZfV=vJ~8' - JWT_SECRET
         req.userID = payload.userID // Here we are attaching userID from payload to req body, so that we can use it in cartItems controller and it is most secured way to retrive userID
     }catch(err) {
         //4.return error

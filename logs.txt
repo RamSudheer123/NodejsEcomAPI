@@ -82,3 +82,5 @@
 {"level":"info","message":"/api/cartItems - {\"productID\":\"668a79a6c27e9aa38206b271\",\"quantity\":2}","service":"request-logging"}
 {"level":"info","message":"/api/cartItems - {\"productID\":\"668a79a6c27e9aa38206b271\",\"quantity\":2}","service":"request-logging"}
 {"level":"info","message":"/api/cartItems - {\"productID\":\"668a79a6c27e9aa38206b271\",\"quantity\":2}","service":"request-logging"}
+{"level":"info","message":"/api/users/resetPassword - {\"newPassword\":\"Sudheer@3\"}","service":"request-logging"}
+{"level":"info","message":"/api/users/resetPassword - {\"newPassword\":\"sudheer3\"}","service":"request-logging"}
