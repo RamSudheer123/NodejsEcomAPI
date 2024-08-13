@@ -20,8 +20,8 @@ export default class ProductController {
     
     async addProduct(req, res) {
         try {
-            const { name, desc, price, category, sizes } = req.body;
-            const newProduct = new ProductModel(name, desc, parseFloat(price), req.file.filename, category, sizes.split(","))
+            const { name, desc, price, categories, sizes } = req.body;
+            const newProduct = new ProductModel(name, desc, parseFloat(price), req?.file?.filename, categories, sizes?.split(",")) // Here ? will will make sure that those attriute will run if they are not undefined, If they are defined in req.body then they will be added to the product
             const createdProduct =  await this.productRepository.add(newProduct)
             res.status(201).send(createdProduct)
         }catch(err) {

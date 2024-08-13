@@ -1,7 +1,14 @@
 import { ObjectId } from "mongodb";
 import { getDB } from "../../config/mongodb.js";
 import { applicationError } from "../../error-handler/applicationError.js";
+import mongoose from "mongoose";
+import { productSchema } from "./product.schema.js";
+import { reviewSchema } from "./review.schema.js";
+import { categorySchema } from "./category.schema.js";
 
+const ProductModel = mongoose.model('products', productSchema)
+const ReviewModel = mongoose.model('reviews', reviewSchema)
+const CategoryModel = mongoose.model('category', categorySchema)
 
 class ProductRepository {
 
@@ -9,17 +16,32 @@ class ProductRepository {
         this.collection = "products"
     }
 
-    async add(newProduct) {
+    async add(productData) {
         try {
-            // 1. Get the database
-            const db = getDB();
+            //This is the code with mongoose (Many-to-Many relationship)
+            // 1. Add the product
+            productData.categories = productData.category.split(",").map(e => e.trim()) //map function is used to apply trim on every every element in category and trim is used to remove white spaces brfore and after the every element
+            // console.log(productData)
+            const newProduct = new ProductModel(productData)
+            const savedProduct = await newProduct.save()
+            // 2. Update categories
+            await CategoryModel.updateMany(
+                {_id: {$in: productData.categories}},
+                {
+                    $push: {products: new ObjectId(savedProduct._id)}
+                }
+            )
+
+            //This is code with out mongoose
+            // // 1. Get the database
+            // const db = getDB();
             
-            // 2. Get the colletion
-            const collection = db.collection(this.collection); //we need to provide colletion name here and if that colletion is not present in database, it will create it automatically
+            // // 2. Get the colletion
+            // const collection = db.collection(this.collection); //we need to provide colletion name here and if that colletion is not present in database, it will create it automatically
             
-            // 3. Insert the document
-            await collection.insertOne(newProduct)
-            return newProduct
+            // // 3. Insert the document
+            // await collection.insertOne(newProduct)
+            // return newProduct
         }
         catch(err) {
             console.log(err); // Need to log the error here
@@ -129,24 +151,50 @@ class ProductRepository {
     //         return new applicationError("Something went wrong with database", 500)
     //     }
     // }
+
     async rate(userID, productID, rating) { //This is the simplest way to update the rating
         try {
-            // 1. Get the database
-            const db = getDB();
-            
-            // 2. Get the colletion
-            const collection = db.collection(this.collection); //we need to provide colletion name here and if that colletion is not present in database, it will create it automatically
-            
-            //1. Removes existing entry
-            await collection.updateOne({_id: new ObjectId(productID)}, {$pull: {ratings: {userID: new ObjectId(userID)}}})
-            //2. Add new entry
-            await collection.updateOne({_id: new ObjectId(productID)}, {$push: {ratings: {userID: new ObjectId(userID), rating}}})
-
+           const productToUpdate = await ProductModel.findById(productID)
+           if(!productToUpdate) {
+            throw new Error("Product not found")
+           }
+           const userReview = await ReviewModel.findOne({product: new ObjectId(productID), user: new ObjectId(userID)})
+           if(userReview) {
+            userReview.rating = rating
+            userReview.save()
+           }
+           else {
+            const newReview = new ReviewModel({
+                product: new ObjectId(productID),
+                user: new ObjectId(userID),
+                rating: rating
+            })
+            newReview.save()
+           }
         }
         catch(err) {
             console.log(err); // Need to log the error here
             return new applicationError("Something went wrong with database", 500)
         }
+
+        // // This is the code without mongoose
+        // try {
+        //     // 1. Get the database
+        //     const db = getDB();
+            
+        //     // 2. Get the colletion
+        //     const collection = db.collection(this.collection); //we need to provide colletion name here and if that colletion is not present in database, it will create it automatically
+            
+        //     //1. Removes existing entry
+        //     await collection.updateOne({_id: new ObjectId(productID)}, {$pull: {ratings: {userID: new ObjectId(userID)}}})
+        //     //2. Add new entry
+        //     await collection.updateOne({_id: new ObjectId(productID)}, {$push: {ratings: {userID: new ObjectId(userID), rating}}})
+
+        // }
+        // catch(err) {
+        //     console.log(err); // Need to log the error here
+        //     return new applicationError("Something went wrong with database", 500)
+        // }
     }
 
     //This is used to get averagePrice based on category

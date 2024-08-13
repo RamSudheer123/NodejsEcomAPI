@@ -16,6 +16,7 @@ import { connectToMongoDB } from "./src/config/mongodb.js";
 import orderRouter from "./src/features/order/order.routes.js";
 import { connectUsingMongoose } from "./src/config/mongooseConfig.js";
 import mongoose from "mongoose";
+import likeRouter from "./src/features/like/like.router.js";
 
 
 const server = express();
@@ -50,6 +51,7 @@ server.use("/api/products", jwtAuth, productRouter) //This is for jwt authentica
 server.use("/api/cartItems", jwtAuth, cartItemRouter)
 server.use("/api/users", userRouter)
 server.use("/api/orders", jwtAuth, orderRouter)
+server.use("/api/likes", jwtAuth, likeRouter)
 
 //handle default request
 server.get("/", (req, res) => {
